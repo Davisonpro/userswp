@@ -4690,8 +4690,10 @@ class UsersWP_Forms {
 		global $wpdb;
 		$file_obj   = new UsersWP_Files();
 		$table_name = uwp_get_table_prefix() . 'uwp_form_fields';
+		// Admin use only fields can't be changed by users on their own profile.
+		$admin_use_where = current_user_can( 'edit_users' ) ? '' : " AND for_admin_use != '1'";
 		//Normal fields
-		$fields = $wpdb->get_results( 'SELECT * FROM ' . $table_name . " WHERE form_type = 'account' AND field_type != 'file' AND field_type != 'fieldset' ORDER BY sort_order ASC" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$fields = $wpdb->get_results( 'SELECT * FROM ' . $table_name . " WHERE form_type = 'account' AND field_type != 'file' AND field_type != 'fieldset'" . $admin_use_where . " ORDER BY sort_order ASC" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		if ( $fields ) {
 		    if ( isset( $_POST['locale'] ) ) {
 					$_POST['uwp_language'] = sanitize_text_field( $_POST['locale'] );
@@ -4720,7 +4722,7 @@ class UsersWP_Forms {
 		}
 
 		//File fields
-		$fields = $wpdb->get_results( 'SELECT * FROM ' . $table_name . " WHERE form_type = 'account' AND field_type = 'file' AND is_default = '0' ORDER BY sort_order ASC" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$fields = $wpdb->get_results( 'SELECT * FROM ' . $table_name . " WHERE form_type = 'account' AND field_type = 'file' AND is_default = '0'" . $admin_use_where . " ORDER BY sort_order ASC" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		if ( $fields ) {
 			$result = $file_obj->validate_uploads( $_FILES, 'account', true, $fields );
 			if ( ! is_wp_error( $result ) ) {
