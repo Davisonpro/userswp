@@ -154,6 +154,13 @@ class UWP_User_Meta_Widget extends WP_Super_Duper {
         }
 
         $field = $fields[0];
+
+        // Non-public fields are only shown to the user and those who can edit them.
+        $can_view = ! isset( $field->is_public ) || '0' != $field->is_public || current_user_can( 'edit_user', $user->ID );
+        if ( ! apply_filters( 'uwp_user_meta_can_view_field', $can_view, $field, $user, $args ) ) {
+            return '';
+        }
+
         $value = $output = $label = '';
 
         if ($field->field_icon != '') {
