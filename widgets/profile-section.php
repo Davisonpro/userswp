@@ -82,7 +82,7 @@ class UWP_Profile_Section_Widget extends WP_Super_Duper {
 
         if(isset($args['type']) && $args['type']=='open'){
             $class = !empty($args['class']) ? esc_attr($args['class']) : '';
-            $position = isset($args['position']) ? $args['position'] : 'full';
+            $position = isset($args['position']) ? esc_attr($args['position']) : 'full';
             $output = '<div class="uwp_page uwp-section-'.$position.' '.$class.'">';
         }elseif(isset($args['type']) && $args['type']=='close'){
             $output = "</div>";
@@ -91,7 +91,7 @@ class UWP_Profile_Section_Widget extends WP_Super_Duper {
         // if block demo return empty to show placeholder text
         if($this->is_block_content_call()){
             $section_type = $args['type']=='open' ? __('closing','userswp') : __('opening','userswp');
-            $output = '<div style="background:#0185ba33;padding: 10px;">'.sprintf( __('Archive Item Section: <b>%s : %s</b> <small>(requires %s section to work)</small>', 'userswp'),strtoupper($args['type']),strtoupper($args['position']),$section_type).'</div>';
+            $output = '<div style="background:#0185ba33;padding: 10px;">'.sprintf( __('Archive Item Section: <b>%s : %s</b> <small>(requires %s section to work)</small>', 'userswp'),esc_html(strtoupper($args['type'])),esc_html(strtoupper($args['position'])),$section_type).'</div>';
         }
 
         return $output;
