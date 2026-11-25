@@ -1345,6 +1345,16 @@ class UsersWP_Forms {
 			return;
 		}
 
+		// The modal only verifies TOTP and email codes; other methods (e.g. passkeys) are handled by WP 2FA on the login page.
+		if ( ! in_array( $provider, array( 'totp', 'email' ), true ) ) {
+			$login_url = uwp_get_login_page_url();
+			$login_url = $login_url ? $login_url : wp_login_url();
+
+			$errors->add( 'uwp_2fa_use_login_page', sprintf( __( 'Your account uses a two-factor method this form does not support. Please <a href="%s">log in from the login page</a>.', 'userswp' ), esc_url( $login_url ) ) );
+
+			return $errors;
+		}
+
 		ob_start();
 		?>
 
