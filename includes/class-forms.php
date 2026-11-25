@@ -1801,6 +1801,20 @@ class UsersWP_Forms {
 			wp_send_json_error( array( 'message' => $message ) );
 		}
 
+		// Only providers verified below are accepted; refuse anything else so an unsupported method can't skip the code.
+		if ( ! in_array( $provider, array( 'totp', 'email', 'backup_codes' ), true ) ) {
+			do_action( 'wp_login_failed', $user->user_login, new WP_Error( 'invalid_2fa', __( 'Unsupported 2FA method.', 'userswp' ) ) );
+
+			$message = aui()->alert(
+				array(
+					'type'    => 'error',
+					'content' => __( 'Unsupported two-factor authentication method.', 'userswp' ),
+				)
+			);
+
+			wp_send_json_error( array( 'message' => $message ) );
+		}
+
 		// Resend the email code when asked.
 		if ( 'email' === $provider ) {
 			// WP 2FA stops AJAX requests without its setup wizard nonce with a 400 error, so send the code as a normal request.
